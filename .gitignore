@@ -20,3 +20,6 @@
 # clj-kondo
 /.clj-kondo/.cache
 /.lsp/.cache
+
+# Calva
+/.calva/
