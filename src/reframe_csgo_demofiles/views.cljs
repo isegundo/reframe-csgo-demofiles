@@ -7,15 +7,38 @@
    [reframe-csgo-demofiles.subs :as subs]))
 
 
+; cs:go view
+
+;; TODO Review the nested components
+
+(defn demo-file-details [demofile]
+  [re-com/v-box
+   :children [[re-com/h-box
+               :children [[re-com/label :label "Date/Time:"]
+                          [re-com/label :label "2022-01-25T14:55:00.000Z"]]]
+              [re-com/h-box
+               :children [[re-com/label :label "Players:"]
+                          [re-com/label :label (:players demofile)]]]]])
+
+(defn csgo-demo-file-panel []
+  (let [current-demo-file (re-frame/subscribe [::subs/current-demo-file])]
+    (fn []
+      [re-com/v-box
+       :children [[re-com/button
+                   :label "Load demo file"]
+                  (when @current-demo-file
+                    [demo-file-details @current-demo-file])]])))
 
 ;; home
 
 (defn home-title []
   (let [name (re-frame/subscribe [::subs/name])]
-    [re-com/title
-     :src   (at)
-     :label (str "Hello from " @name ". This is the Home Page." )
-     :level :level1]))
+    [re-com/v-box
+     :children [[re-com/title
+                 :src   (at)
+                 :label (str @name)
+                 :level :level1]
+                [csgo-demo-file-panel]]]))
 
 (defn link-to-about-page []
   [re-com/hyperlink
@@ -38,7 +61,7 @@
 (defn about-title []
   [re-com/title
    :src   (at)
-   :label "This is the About Page."
+   :label "About"
    :level :level1])
 
 (defn link-to-home-page []

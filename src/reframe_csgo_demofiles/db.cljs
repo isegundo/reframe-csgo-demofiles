@@ -1,4 +1,5 @@
 (ns reframe-csgo-demofiles.db)
 
 (def default-db
-  {:name "re-frame"})
+  {:name "CS:GO DemoFile reader"
+   :current-demo-file {:players "OPa"}})

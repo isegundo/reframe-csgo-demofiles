@@ -11,3 +11,8 @@
  ::active-panel
  (fn [db _]
    (:active-panel db)))
+
+(re-frame/reg-sub
+ ::current-demo-file
+ (fn [db _]
+   (:current-demo-file db)))
