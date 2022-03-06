@@ -24,15 +24,15 @@
   (let [current-demo-file (re-frame/subscribe [::subs/current-demo-file])]
     (fn []
       [re-com/v-box
-       :children [[re-com/button
-                   :label "Load demo file"]
+       :children [[:input {:type "file"
+                           :on-change #(re-frame/dispatch [::events/demo-file-selected (-> % .-target .-files (aget 0))])}]
                   (when @current-demo-file
                     [demo-file-details @current-demo-file])]])))
 
 ;; home
 
 (defn home-title []
-  (let [name (re-frame/subscribe [::subs/name])]
+  (let [name (re-frame/subscribe [::subs/app-name])]
     [re-com/v-box
      :children [[re-com/title
                  :src   (at)
