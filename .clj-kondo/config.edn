@@ -1,0 +1,3 @@
+{:linters
+ {:unresolved-symbol
+  {:exclude [(day8.re-frame.tracing/fn-traced)]}}}
