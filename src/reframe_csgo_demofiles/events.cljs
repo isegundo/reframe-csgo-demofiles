@@ -20,22 +20,40 @@
             {:db (assoc db :active-panel active-panel)}))
 
 
-(defn parseDemoFile [^js demofile-instance buffer]
-
-  (let [parsed (.parse demofile-instance buffer)]
-    (js/console.log parsed)
-    (re-frame/dispatch [::demo-file-parsed parsed])))
-
 (re-frame/reg-event-db
+ ::tickend
+ (fn-traced [db [_ tick tick-data]]
+            (update-in db [:ticks tick] merge tick-data)))
+
+; TODO move to other place?
+(defn extract-player
+  [player]
+  {:id (. player -userId)
+   :name (.. player -userInfo -name)
+   :pos-x (.. player -position -x)
+   :pos-y (.. player -position -y)
+   :pos-z (.. player -position -z)})
+
+; TODO move to other place?
+(defn dispatch-tickend
+  [tick demofile]
+  (when (and (< tick 100)
+             (>= tick 0))
+    (re-frame/dispatch [::tickend tick {:players (map extract-player (. demofile -players))}])))
+
+(re-frame/reg-event-fx
  ::demo-file-selected
- (fn-traced [db [_ file]]
-            (let [demofile-instance (new (.. js/window -demofile -DemoFile))]
+ (fn-traced [_ [_ file]]
+            (let [demofile-instance (new (.. js/window -demofile -DemoFile))
+                  ;; game-events (. demofile-instance -gameEvents)
+                  ]
+              (.on demofile-instance "tickend" #(dispatch-tickend % demofile-instance))
+              (.on demofile-instance "end" #(re-frame/dispatch [::demo-file-parsed]))
               (-> (. file arrayBuffer)
-                  (.then #(parseDemoFile demofile-instance %))))
-            db))
+                  (.then #(.parse demofile-instance %))))
+            {}))
 
 (re-frame/reg-event-db
  ::demo-file-parsed
- (fn-traced [db [a parsed-file]]
-            (js/console.log parsed-file)
-            (assoc db :current-demo-file parsed-file)))
+ (fn-traced [db event]
+            (assoc db :demo-file-parsed true)))

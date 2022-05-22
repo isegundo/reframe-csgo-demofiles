@@ -13,6 +13,20 @@
    (:active-panel db)))
 
 (re-frame/reg-sub
- ::current-demo-file
+ ::demo-file-parsed
  (fn [db _]
-   (:current-demo-file db)))
+   (:demo-file-parsed db)))
+
+(re-frame/reg-sub
+ ::current-tick
+ (fn [db _]
+   (:current-tick db)))
+
+;; (re-frame/reg-sub
+;;  ::player-names
+;;  (fn [db _]
+;;    (let [demo-file (-> db
+;;                        :current-demo-file)]
+;;      (js/console.log (.. demo-file -entities))
+;;      "Blu"
+;;      )))

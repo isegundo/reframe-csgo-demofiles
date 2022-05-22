@@ -11,23 +11,30 @@
 
 ;; TODO Review the nested components
 
-(defn demo-file-details [demofile]
+(defn demo-file-details []
   [re-com/v-box
    :children [[re-com/h-box
                :children [[re-com/label :label "Date/Time:"]
                           [re-com/label :label "2022-01-25T14:55:00.000Z"]]]
               [re-com/h-box
-               :children [[re-com/label :label "Players:"]
-                          [re-com/label :label (:players demofile)]]]]])
+               :children [[re-com/label :label (str "Players:"
+                                                    ;; @(re-frame/subscribe [::subs/player-names])
+                                                    )]
+                          ]]
+              [re-com/h-box
+               :children [[re-com/label :label (str "Current tick:" 
+                                                    @(re-frame/subscribe [::subs/current-tick])
+                                                    )]
+                          ]]]])
 
 (defn csgo-demo-file-panel []
-  (let [current-demo-file (re-frame/subscribe [::subs/current-demo-file])]
+  (let [demo-file-parsed (re-frame/subscribe [::subs/demo-file-parsed])]
     (fn []
       [re-com/v-box
        :children [[:input {:type "file"
                            :on-change #(re-frame/dispatch [::events/demo-file-selected (-> % .-target .-files (aget 0))])}]
-                  (when @current-demo-file
-                    [demo-file-details @current-demo-file])]])))
+                  (when @demo-file-parsed
+                    [demo-file-details])]])))
 
 ;; home
 
